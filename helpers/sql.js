@@ -1,6 +1,12 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+
+/** Takes in object of data and schema for data structure. Manipulates
+ * data for SQL query.
+ * Returns: {
+ * setCols : `"first_name"=$1, "last-name"=$2...`
+ * values: ["michael", "test", ...]
+ * } */
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
