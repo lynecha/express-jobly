@@ -48,8 +48,11 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  if (req.query.name || req.query.minEmployees || req.query.maxEmployees) {
+  let q = req.query;
+  if (q.minEmployees) q.minEmployees = +q.minEmployees;
+  if (q.maxEmployees) q.maxEmployees = +q.maxEmployees;
 
+  if (q.name || q.minEmployees || q.maxEmployees) {
     const result = jsonschema.validate(req.query, companySearchSchema);
     if (!result.valid) {
       // pass validation errors to error handler

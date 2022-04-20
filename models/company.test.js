@@ -127,12 +127,6 @@ describe("search based on a query", function () {
     ]);
   });
 
-  test("if nothing is passed it returns all the companies", async function () {
-    let companies = await Company.search();
-    expect(companies.length).toEqual(3);
-
-  });
-
   test("not found if no such company", async function () {
     try {
       await Company.get("nope");
