@@ -66,11 +66,12 @@ class Company {
     return companiesRes.rows;
   }
 
+  /** Searches database based on the query string passed in.
+   * If empty query string then defaults to all*/
   static async search(query) {
-    const name = query.name || "%%";
-    const minEmployees = Number(query.minEmployees) || 0;
-    const maxEmployees = Number(query.maxEmployees) || 9000;
-    console.log(name,minEmployees,maxEmployees);
+    const name = query?.name || "%%";
+    const minEmployees = Number(query?.minEmployees) || 0;
+    const maxEmployees = Number(query?.maxEmployees) || 9000;
     if (minEmployees > maxEmployees) {
       throw new BadRequestError("min employees is greater than max employees");
     }
@@ -82,7 +83,7 @@ class Company {
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
            FROM companies
-           WHERE name ILIKE $1 AND num_employees > $2 AND num_employees < $3
+           WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3
            ORDER BY name`,
            [`%${name}%`,minEmployees,maxEmployees]
     );
