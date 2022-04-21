@@ -82,6 +82,7 @@ class Company {
            ORDER BY name`,
       values
     );
+    if (!companies.rows[0]) throw new NotFoundError();
     return companies.rows;
   }
 

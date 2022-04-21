@@ -25,7 +25,7 @@ const router = new express.Router();
  * Authorization required: login
  */
 
-router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
+router.post("/", isAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(req.body, companyNewSchema);
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -96,7 +96,7 @@ router.get("/:handle", async function (req, res, next) {
  * Authorization required: login
  */
 
-router.patch("/:handle", ensureLoggedIn, isAdmin, async function (req, res, next) {
+router.patch("/:handle", isAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(req.body, companyUpdateSchema);
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -112,7 +112,7 @@ router.patch("/:handle", ensureLoggedIn, isAdmin, async function (req, res, next
  * Authorization: login
  */
 
-router.delete("/:handle", ensureLoggedIn, isAdmin, async function (req, res, next) {
+router.delete("/:handle", isAdmin, async function (req, res, next) {
   await Company.remove(req.params.handle);
   return res.json({ deleted: req.params.handle });
 });

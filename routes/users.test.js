@@ -301,7 +301,7 @@ describe("PATCH /users/:username", () => {
     });
   });
 
-  test("unauth for user", async function () {
+  test("unauth for user and not admin", async function () {
     const resp = await request(app)
         .patch(`/users/u1`)
         .send({

@@ -91,7 +91,7 @@ describe("isAdmin", function () {
     isAdmin(req, res, next);
   });
 
-  test("unauth if no login", function () {
+  test("unauth if not admin", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: false } } };
@@ -103,7 +103,7 @@ describe("isAdmin", function () {
 });
 
 
-describe("isCurrentUser", function () {
+describe("isCurrentUserOrAdmin", function () {
   test("works non-admin, curr user", function () {
     expect.assertions(1);
     const req = {params: {username : "test"}};
@@ -114,7 +114,7 @@ describe("isCurrentUser", function () {
     isCurrUserOrAdmin(req, res, next);
   });
 
-  test("unauth if usernames don't match non-admin", function () {
+  test("unauth if usernames don't match and non-admin", function () {
     expect.assertions(1);
     const req = {params: {username : "test1"}};
     const res = { locals: { user: { username: "test", isAdmin: false } } };
