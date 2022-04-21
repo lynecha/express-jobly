@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, isAdmin } = require("../middleware/auth");
 const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
@@ -25,7 +25,7 @@ const router = new express.Router();
  * Authorization required: login
  */
 
-router.post("/", ensureLoggedIn, async function (req, res, next) {
+router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(req.body, companyNewSchema);
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -49,11 +49,13 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   let q = req.query;
-  if (q.minEmployees) q.minEmployees = +q.minEmployees;
-  if (q.maxEmployees) q.maxEmployees = +q.maxEmployees;
+  if (q.minEmployees) q.minEmployees = Number(q.minEmployees);
+  if (q.maxEmployees) q.maxEmployees = Number(q.maxEmployees);
+
+  console.log(q.minEmployees,q.maxEmployees);
 
   if (q.name || q.minEmployees || q.maxEmployees) {
-    const result = jsonschema.validate(req.query, companySearchSchema);
+    const result = jsonschema.validate(q, companySearchSchema);
     if (!result.valid) {
       // pass validation errors to error handler
       //  (the "stack" key is generally the most useful)
@@ -61,7 +63,7 @@ router.get("/", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     else {
-      const companies = await Company.search(req.query);
+      const companies = await Company.search(q);
       return res.json({ companies });
     }
   }
@@ -94,7 +96,7 @@ router.get("/:handle", async function (req, res, next) {
  * Authorization required: login
  */
 
-router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
+router.patch("/:handle", ensureLoggedIn, isAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(req.body, companyUpdateSchema);
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -110,7 +112,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
  * Authorization: login
  */
 
-router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
+router.delete("/:handle", ensureLoggedIn, isAdmin, async function (req, res, next) {
   await Company.remove(req.params.handle);
   return res.json({ deleted: req.params.handle });
 });
