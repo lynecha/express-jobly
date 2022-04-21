@@ -42,9 +42,27 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
+/** Check to see if current user has {isAdmin : true}
+ * Throw Unauthorized error if not present. */
+
 function isAdmin(req, res, next) {
   try {
     if (!res.locals.user.isAdmin) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+/** Check to see if current user matches url param user, or if they are admin.
+ * Throw Unauthorized error if not matched or not admin */
+
+function isCurrUserOrAdmin(req, res, next){
+  const storedUser = res.locals.user.username;
+  const urlUser = req.params.username;
+  const isAdmin = res.locals.user.isAdmin;
+  try {
+    if (storedUser !== urlUser && !isAdmin) throw new UnauthorizedError();
     return next();
   } catch (err) {
     return next(err);
@@ -55,5 +73,6 @@ function isAdmin(req, res, next) {
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  isAdmin
+  isAdmin,
+  isCurrUserOrAdmin
 };
