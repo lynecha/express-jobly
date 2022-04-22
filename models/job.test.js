@@ -79,6 +79,44 @@ describe("findAll jobs", function () {
   });
 });
 
+/************************************** findByCompanyHandle */
+
+describe("find jobs by company handle", function () {
+  test("works", async function () {
+    let jobs = await Job.findByCompanyHandle("c2");
+    jobs.map(job => delete job.id);
+    expect(jobs).toEqual([
+      {
+        title: "job3",
+        salary: 1000000,
+        equity: "0.1",
+        companyHandle: "c2"
+      },
+    ]);
+  });
+  test("query for non-existing company", async function () {
+    let jobs = await Job.findByCompanyHandle("c10");
+    jobs.map(job => delete job.id);
+    expect(jobs).toEqual([]);
+  });
+
+  test("query for no jobs for company", async function () {
+    let jobs = await Job.findByCompanyHandle("c3");
+    jobs.map(job => delete job.id);
+    expect(jobs).toEqual([]);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
 /************************************** get */
 
 describe("get", function () {

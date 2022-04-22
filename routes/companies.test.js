@@ -11,7 +11,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  u4Token
+  u4Token,
+  jobIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -157,14 +158,21 @@ describe("GET /companies", function () {
 
 describe("GET /companies/:handle", function () {
   test("works for anon", async function () {
-    const resp = await request(app).get(`/companies/c1`);
+    const resp = await request(app).get(`/companies/c2`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+        jobs: [{
+          id: jobIds[2],
+          title: "Barista",
+          salary: 25000,
+          equity: "0",
+          companyHandle: "c2"
+        }]
       },
     });
   });
@@ -178,6 +186,13 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs: [{
+          id: jobIds[2],
+          title: "Barista",
+          salary: 25000,
+          equity: "0",
+          companyHandle: "c2"
+        }]
       },
     });
   });
@@ -273,7 +288,7 @@ describe("DELETE /companies/:handle", function () {
     const resp = await request(app)
       .delete(`/companies/c1`)
       .set("authorization", `Bearer ${u1Token}`);
-      expect(resp.statusCode).toEqual(401);
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {

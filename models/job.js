@@ -65,6 +65,26 @@ class Job {
     return jobsRes.rows;
   }
 
+  /** Find all job listings.
+   *
+   * Returns [{ id, title, salary, equity, company_handle }, ...]
+   * */
+
+  static async findByCompanyHandle(companyHandle) {
+
+    const jobsRes = await db.query(
+      `SELECT id,
+                title,
+                salary,
+                equity,
+                company_handle AS "companyHandle"
+           FROM jobs
+           WHERE company_handle = $1
+           ORDER BY title`,
+           [companyHandle]);
+    return jobsRes.rows;
+  }
+
 
 
 
