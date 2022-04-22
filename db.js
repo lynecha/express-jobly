@@ -4,10 +4,6 @@
 
 const { Client } = require("pg");
 
-
-
-
-
 const { getDatabaseUri } = require("./config");
 
 const db = new Client({
