@@ -84,7 +84,7 @@ class Job {
            ORDER BY title`,
       values
     );
-    console.log("what is rows   ", jobs.rows);
+
     if (!jobs.rows[0]) throw new NotFoundError();
     return jobs.rows;
   }
@@ -136,11 +136,10 @@ class Job {
         equity: "equity"
       });
     const idVarIdx = "$" + (values.length + 1);
-
     const querySql = `
-      UPDATE companies
+      UPDATE jobs
       SET ${setCols}
-        WHERE handle = ${idVarIdx}
+        WHERE id = ${idVarIdx}
         RETURNING id, title, salary, equity, company_handle AS "companyHandle"`;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
@@ -165,14 +164,16 @@ class Job {
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job listing: ${id}`);
+
+    return job;
   }
 
   static sqlForSearchQuery(queryObj) {
     if(queryObj.title) queryObj.title = `%${queryObj.title}%`
-  
+
     const keys = Object.keys(queryObj);
     let sqlQuery = [];
-  
+
     for (let i = 0; i < keys.length; i++) {
       if (keys[i] === "title") {
         sqlQuery.push(`title ILIKE $${i + 1}`);
@@ -188,7 +189,7 @@ class Job {
       }
     }
     const values = Object.values(queryObj);
-  
+
     return {
       sqlQuery: sqlQuery.join(" AND "),
       values
